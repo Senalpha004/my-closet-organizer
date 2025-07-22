@@ -5,15 +5,15 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
 
-        ArrayList<String> closet = new ArrayList<>(); //array list to store user inputs
+        ArrayList<ClothingItem> closet = new ArrayList<>(); //array list to store user inputs
 
         System.out.println("Welcome to Closet Organizer");
         Scanner input = new Scanner(System.in);
 
         System.out.println("What's your name?");
-        String name = input.nextLine();
+        String user = input.nextLine();
 
-        System.out.println("Welcome to your virtual closet, " + name + "!" );
+        System.out.println("Welcome to your virtual closet, " + user + "!" );
         System.out.println("Choose an Option from Below: ");
 
         int option;
@@ -25,7 +25,8 @@ public class Main {
             System.out.println("2. View Closet");
             System.out.println("3. Remove a clothing");
             System.out.println("4. Check clothing count");
-            System.out.println("5. Exit");
+            System.out.println("5. Check Your Favourites!");
+            System.out.println("6. Exit");
 
             //taking the input and looping the menu until user exits
             while (!input.hasNextInt()) {
@@ -38,42 +39,86 @@ public class Main {
 
             switch (option) {
                 case 1:
+                    System.out.println("Clothing type? (Pants/Jeans/etc)");
+                    String type = input.nextLine();
+
                     System.out.println("Clothing name? ");
-                    String clothingName = input.nextLine();
-                    closet.add(clothingName);
+                    String name = input.nextLine();
+
+                    System.out.println("Is this your favourite? True/False");
+                    boolean isFav = input.nextBoolean();
+                    input.nextLine(); //clears buffer
+
+                    //adding the inputs to the class
+                    ClothingItem items = new ClothingItem(name, type, isFav);
+                    closet.add(items);
+
                     System.out.println("Clothing added!");
                     break;
 
                 case 2:
-                    System.out.println("Your closet has: ");
-                    for(String clothing : closet) {
-                        System.out.println(clothing);
+                    if(closet.isEmpty()) {
+                        System.out.println("Closet is empty!");
+                    }else{
+                        System.out.println("Your closet has: ");
+                        for (ClothingItem clothing : closet) {
+                            System.out.println(clothing.name);
+                        }
                     }
                     break;
 
                 case 3:
                     System.out.println("Which clothing you wanna remove? ");
                     String removeClothe = input.nextLine();
-                    if (closet.remove(removeClothe)) {
-                        System.out.println("Clothing removed!");
-                    } else {
-                        System.out.println("Clothing not found or check spellings!");
+
+                    boolean found= false;
+                    for(ClothingItem item : closet) {
+                        if (item.getName().equalsIgnoreCase(removeClothe)) {
+                            closet.remove(item);
+                            System.out.println("Clothing removed from your closet!");
+                            found = true;
+                            break;
+                        } else {
+                            System.out.println("Clothing not found or check spellings!");
+                        }
+                        break;
                     }
                     break;
 
                 case 4:
-                    System.out.println("Number of Clothes you have in your closet: " + closet.size());
+                    if(closet.isEmpty()) {
+                        System.out.println("You don't have any clothes left :(");
+                    }else {
+                        System.out.println("Number of Clothes you have in your closet: " + closet.size());
+                    }
                     break;
 
                 case 5:
-                    System.out.println("Bye bye," + name + " Stay Stylish!");
+
+                    boolean fav = false; //to find whether there are any favourites or not
+
+                    for (ClothingItem clothing : closet) {
+                        if (clothing.isFav != fav) {
+                            System.out.println("These are your favourites: ");
+                            System.out.println(clothing.getName());
+                            fav = true;
+                            break;
+                        }
+                    }
+                    if(!fav){
+                        System.out.println("You don't have any favourites yet :( ");
+                    }
+                    break;
+
+                case 6:
+                    System.out.println("Bye bye," + user + " Stay Stylish!");
                     break;
 
                 default:
                     System.out.println("Invalid option, Try Again!");
             }
 
-        }while (option != 5);
+        }while (option != 6);
 
     }
 }
