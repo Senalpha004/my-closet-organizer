@@ -1,3 +1,5 @@
+import java.io.*;
+import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -6,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
 
         ArrayList<ClothingItem> closet = new ArrayList<>(); //array list to store user inputs
+        loadCloset(closet); //load saved items to main list
 
         System.out.println("Welcome to Closet Organizer");
         Scanner input = new Scanner(System.in);
@@ -26,7 +29,8 @@ public class Main {
             System.out.println("3. Remove a clothing");
             System.out.println("4. Check clothing count");
             System.out.println("5. Check Your Favourites!");
-            System.out.println("6. Exit");
+            System.out.println("6. Check what you added last time!");
+            System.out.println("7. Exit");
 
             //taking the input and looping the menu until user exits
             while (!input.hasNextInt()) {
@@ -72,16 +76,15 @@ public class Main {
                     String removeClothe = input.nextLine();
 
                     boolean found= false;
-                    for(ClothingItem item : closet) {
-                        if (item.getName().equalsIgnoreCase(removeClothe)) {
-                            closet.remove(item);
+                    for(int i = 0; i < closet.size(); i++) {
+                        if (closet.get(i).getName().equalsIgnoreCase(removeClothe)) {
+                            closet.remove(i);
                             System.out.println("Clothing removed from your closet!");
                             found = true;
-                            break;
-                        } else {
+                        }
+                        if(!found) {
                             System.out.println("Clothing not found or check spellings!");
                         }
-                        break;
                     }
                     break;
 
@@ -98,11 +101,12 @@ public class Main {
                     boolean fav = false; //to find whether there are any favourites or not
 
                     for (ClothingItem clothing : closet) {
-                        if (clothing.isFav != fav) {
-                            System.out.println("These are your favourites: ");
+                        if (clothing.isFav()) {
+                            if (!fav) {
+                                System.out.println("These are your favourites:");
+                                fav = true;
+                            }
                             System.out.println(clothing.getName());
-                            fav = true;
-                            break;
                         }
                     }
                     if(!fav){
@@ -111,6 +115,13 @@ public class Main {
                     break;
 
                 case 6:
+                    for(ClothingItem clothing : closet) {
+                        System.out.println(clothing.getName());
+                    }
+                    break;
+
+                case 7:
+                    saveClosetToFile(closet,"closet.txt");
                     System.out.println("Bye bye," + user + " Stay Stylish!");
                     break;
 
@@ -118,7 +129,48 @@ public class Main {
                     System.out.println("Invalid option, Try Again!");
             }
 
-        }while (option != 6);
+        }while (option != 7);
 
+    }
+
+    public static void saveClosetToFile(ArrayList<ClothingItem> closet, String fileName) {
+
+        try {
+            FileWriter writer = new FileWriter(fileName, false);
+            writer.write("Clothing Name, Clothing Type, Favourite or Not" + "\n");
+            for (ClothingItem clothing : closet) {
+                writer.write(clothing.getName() +", "+ clothing.getType() +", "+ clothing.isFav() + "\n");
+            }
+            writer.close();
+            System.out.println("Closet has been saved to file!");
+        } catch (IOException e) {
+            System.out.println("Error saving to file!" + e.getMessage());;
+        }
+
+
+    }
+
+    public static void loadCloset(List<ClothingItem> closet){
+        File file = new File("closet.txt");
+        if(!file.exists())return;
+        try (Scanner scanner = new Scanner(file)){
+            //skips header line
+            if (scanner.hasNextLine()) scanner.nextLine();
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+
+                if(parts.length == 3){
+                    String name = parts[0].trim();
+                    String type = parts[1].trim();
+                    boolean isFav = Boolean.parseBoolean(parts[2].trim());
+
+                    closet.add(new ClothingItem(name, type, isFav));
+                }
+            }
+        }catch (FileNotFoundException e){
+            System.out.println("Previous closet not found!");
+        }
     }
 }

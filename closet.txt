@@ -1,0 +1,3 @@
+Clothing Name, Clothing Type, Favourite or Not
+black denim, denim, false
+pink top, top, true
