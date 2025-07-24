@@ -1,3 +1,5 @@
 Clothing Name, Clothing Type, Favourite or Not
-black denim, denim, false
-pink top, top, true
+blue top, top, false
+blue wide leg denim, denim, true
+pink top, top, false
+white short, denim, false
