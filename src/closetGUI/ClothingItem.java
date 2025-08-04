@@ -1,3 +1,5 @@
+package closetGUI;
+
 public class ClothingItem {
 
     String name;
