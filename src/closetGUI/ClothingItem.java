@@ -31,4 +31,9 @@ public class ClothingItem {
         isFav = fav;
     }
 
+    @Override
+    public String toString() {
+        return name + ", Favourite? " + (isFav ? "Yes" : "No");
+    }
+
 }
